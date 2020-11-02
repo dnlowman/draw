@@ -1,4 +1,5 @@
 import React, {ChangeEvent, useCallback, useEffect, useRef, useState} from 'react';
+import io from "socket.io-client";
 import './App.css';
 
 function App() {
@@ -8,6 +9,16 @@ function App() {
   const [y, setY] = useState<number>(0.0);
   const [color, setColor] = useState<string>("#000000");
   const [lineWidth, setLineWidth] = useState<number>(1);
+
+  useEffect(() => {
+    const socket = io("http://localhost:3000");
+
+    function sendMsg() {
+      socket.emit("message", "HELLO WORLD");
+    }
+
+    sendMsg();
+  }, []);
 
   useEffect(() => {
     const current = paintCanvas?.current;
