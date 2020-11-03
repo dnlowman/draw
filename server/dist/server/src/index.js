@@ -1,52 +1,45 @@
-import express, { Express } from "express";
-import path from "path";
-import SocketIO, { Socket } from "socket.io";
-import { Server } from "http";
-import { config } from "dotenv";
-import EventTypes from "./EventTypes";
-
-config();
-
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+var _a, _b, _c;
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const path_1 = __importDefault(require("path"));
+const socket_io_1 = __importDefault(require("socket.io"));
+const http_1 = require("http");
+const dotenv_1 = require("dotenv");
+const EventTypes_1 = __importDefault(require("../../shared/EventTypes"));
+dotenv_1.config();
 // @ts-ignore
 const { log, warn, error } = console;
 // @ts-ignore
 const { freeze } = Object;
-
 log(`Starting draw server....`);
-log(`Port: ${process?.env?.PORT}`);
-
-const app: Express = express();
-app.set("port", process?.env?.PORT ?? 3000);
-
-const http = new Server(app);
-const io = SocketIO(http);
-
+log(`Port: ${(_a = process === null || process === void 0 ? void 0 : process.env) === null || _a === void 0 ? void 0 : _a.PORT}`);
+const app = express_1.default();
+app.set("port", (_c = (_b = process === null || process === void 0 ? void 0 : process.env) === null || _b === void 0 ? void 0 : _b.PORT) !== null && _c !== void 0 ? _c : 3000);
+const http = new http_1.Server(app);
+const io = socket_io_1.default(http);
 const rooms = [];
-
-app.get("/", (req: any, res: any) => {
-    res.sendFile(path.resolve("./client/index.html"));
+app.get("/", (req, res) => {
+    res.sendFile(path_1.default.resolve("./client/index.html"));
 });
-
-io.on("connection", (socket: Socket) => {
+io.on("connection", (socket) => {
     log(`[!] Socket connecting: ${socket.id}`);
-
     socket.on('disconnecting', () => {
         log(`[!] Socket disconnecting: ${socket.id}`);
     });
-
     socket.on('disconnect', () => {
         log(`[!] Socket disconnected: ${socket.id}`);
     });
-
-    socket.on(EventTypes.CREATE_ROOM, (msg) => {
+    socket.on(EventTypes_1.default.CREATE_ROOM, (msg) => {
         log(`[!] Creating room: ${socket.id}`);
     });
 });
-
 http.listen(3000, () => {
     console.log("listening on *:3000");
 });
-
 /*
 
   // sending to the client
@@ -95,3 +88,4 @@ http.listen(3000, () => {
   io.emit('an event sent to all connected clients');
 
 */
+//# sourceMappingURL=index.js.map

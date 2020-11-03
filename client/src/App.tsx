@@ -1,6 +1,12 @@
 import React, {ChangeEvent, useCallback, useEffect, useRef, useState} from 'react';
 import io from "socket.io-client";
 import './App.css';
+import EventTypes from "./EventTypes";
+
+// eslint-disable-line
+const { log, warn, error } = console;
+// eslint-disable-line
+const { freeze } = Object;
 
 function App() {
   const paintCanvas = useRef<HTMLCanvasElement>(null);
@@ -13,11 +19,14 @@ function App() {
   useEffect(() => {
     const socket = io("http://localhost:3000");
 
-    function sendMsg() {
-      socket.emit("message", "HELLO WORLD");
-    }
+    socket.on('connect', () => {
+      log(`Connected: ${socket.connected}`);
+      socket.emit(EventTypes.CREATE_ROOM);
+    });
 
-    sendMsg();
+    socket.on('disconnect', () => {
+      log(`Disconnected: ${socket.connected}`);
+    });
   }, []);
 
   useEffect(() => {
